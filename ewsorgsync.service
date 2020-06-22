@@ -1,0 +1,11 @@
+[Unit]
+Description=EWS Calendar to Orgmode synchronization service
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h
+ExecStart=/usr/bin/env python3 -m ewsorgsync
+TimeoutStopSec=120
+
+[Install]
+WantedBy=default.target

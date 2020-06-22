@@ -1,0 +1,10 @@
+[Unit]
+Description=EWS Calendar to Orgmode synchronization service
+After=network-online.target
+
+[Timer]
+OnBootSec=30m
+OnUnitInactiveSec=30m
+
+[Install]
+WantedBy=timers.target
