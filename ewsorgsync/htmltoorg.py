@@ -5,7 +5,7 @@ from html.parser import HTMLParser
 logger = logging.getLogger('htmltoorg')
 
 urlregex = re.compile(
-    r'(((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*)')
+    r'(((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#%])*)')
 
 
 class HTMLToOrg(HTMLParser):
