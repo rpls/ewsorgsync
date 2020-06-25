@@ -9,7 +9,7 @@ logger = logging.getLogger('org')
 
 def convert_newlines(body):
     # Convert Windows linefeeds
-    body = body.replace('\n\r', '\n')
+    body = body.replace('\r\n', '\n')
     # Convert MAC linefeeds
     return body.replace('\r', '\n')
 
@@ -30,10 +30,11 @@ def ewscal_to_org(items, timezone, outfile):
             print(f'<{start:%Y-%m-%d %H:%M}>--<{end:%Y-%m-%d %H:%M}>',
                   file=outfile)
         if i.body is not None:
+            body = convert_newlines(i.body)
             if type(i.body) == exlib.HTMLBody:
-                body = strip_tags(i.body)
+                body = strip_tags(body)
             elif type(i.body) == exlib.Body:
-                body = scan_links(i.body)
+                body = scan_links(body)
             else:
                 body = ''
                 logging.warning('Unknown body type')
