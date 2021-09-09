@@ -1,12 +1,10 @@
 [My service]
 email=myemail@address.org
 username=myusername
-domain=DOMAINNAME
 # Either put password in plaintext here, ...
 # password=
 # ...or better via keyring module
 # python -m keyring set ewsorgsync USERNAME
-# endpoint=https://mail.address.org/EWS/Exchange.asmx
 server=outlook.office365.com
 output=~/org/cal.org
 timeframe=14
