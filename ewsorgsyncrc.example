@@ -6,6 +6,9 @@ domain=DOMAINNAME
 # password=
 # ...or better via keyring module
 # python -m keyring set ewsorgsync USERNAME
-endpoint=https://mail.address.org/EWS/Exchange.asmx
+# endpoint=https://mail.address.org/EWS/Exchange.asmx
+server=outlook.office365.com
 output=~/org/cal.org
 timeframe=14
+date_fmt=%Y-%m-%d
+datetime_fmt=%Y-%m-%d %H:%M

@@ -14,8 +14,7 @@ from ewsorgsync.ewstoorg import ewscal_to_org
 def connect_ews(config):
     domain = config.get('domain', None)
     username = config['username']
-    if domain is not None:
-        username = f'{domain}\\{username}'
+    email = config['email']
     password = config.get('password', None)
     if password is None:
         password = keyring.get_password('ewsorgsync', username)
@@ -23,14 +22,18 @@ def connect_ews(config):
         logging.error(
             'Can\'t find password (neither in config nor in keychain)')
         sys.exit(-1)
+    if domain is not None:
+        username = f'{domain}\\{username}'
+    else:
+        username = f'{email}'
     cred = exlib.Credentials(username, password)
     ewsconf = exlib.Configuration(credentials=cred,
-                                  service_endpoint=config['endpoint'])
+                                  server=config['server'])
     logging.debug('Connecting to endpoint')
-    acc = exlib.Account(primary_smtp_address=config['email'], config=ewsconf,
+    acc = exlib.Account(primary_smtp_address=config['email'],
+                        config=ewsconf,
                         default_timezone=exlib.EWSTimeZone.localzone(),
-                        access_type=exlib.DELEGATE
-                        )
+                        access_type=exlib.DELEGATE)
     logging.debug('Refreshing folders')
     acc.root.refresh()
     return acc
@@ -47,14 +50,16 @@ def fetch_items(acc, timeframe):
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='EWS to org-mode sync')
-    parser.add_argument('-c', '--config', default=None,
+    parser.add_argument('-c',
+                        '--config',
+                        default=None,
                         type=argparse.FileType('r'),
-                        help='Config file'
-                        )
-    parser.add_argument('-v', '--verbose', default=False,
+                        help='Config file')
+    parser.add_argument('-v',
+                        '--verbose',
+                        default=False,
                         action='store_true',
-                        help='Verbose logging'
-                        )
+                        help='Verbose logging')
 
     return parser.parse_args()
 
@@ -66,12 +71,12 @@ def main():
     else:
         logging.basicConfig(level=logging.INFO)
     configfile = args.config
-    if configfile is None:
-        configfile = os.path.expanduser('~/.ewsorgsyncrc')
-    if not os.path.exists(configfile):
-        logging.error(f'Can\'t find config file "{configfile}"!')
     config = configparser.ConfigParser()
-    config.read(configfile)
+    if configfile is None:
+        configfile = os.path.expanduser('~/.ewssyncrc')
+        config.read(configfile)
+    else:
+        config.read_file(configfile)
     for service in config.sections():
         cfg = config[service]
         acc = connect_ews(cfg)
@@ -82,7 +87,9 @@ def main():
         logging.info(f'Syncing account {service} to file "{outfile}"')
         items = fetch_items(acc, cfg.getint('timeframe', 14))
         with open(outfile, 'w') as outfile:
-            ewscal_to_org(items, acc.default_timezone, outfile)
+            ewscal_to_org(items, acc.default_timezone, outfile,
+                          cfg.get('date_fmt', raw=True),
+                          cfg.get('datetime_fmt', raw=True))
 
 
 if __name__ == '__main__':

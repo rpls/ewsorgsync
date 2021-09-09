@@ -18,16 +18,17 @@ def scan_links(body):
     return urlregex.sub(r'[[\1]]', body)
 
 
-def ewscal_to_org(items, timezone, outfile):
+def ewscal_to_org(items, timezone, outfile, date_fmt, datetime_fmt):
     for i in items:
-        logging.info(f'Adding appointment "{i.subject}" on {i.start:%Y-%m-%d}')
+        logging.info(
+            f'Adding appointment "{i.subject}" on {i.start:{date_fmt}}')
         print(f'* {i.subject}', file=outfile)
         if i.is_all_day:
-            print(f'<{i.start:%Y-%m-%d}>', file=outfile)
+            print(f'<{i.start:{date_fmt}}>', file=outfile)
         else:
             start = i.start.astimezone(timezone)
             end = i.end.astimezone(timezone)
-            print(f'<{start:%Y-%m-%d %H:%M}>--<{end:%Y-%m-%d %H:%M}>',
+            print(f'<{start:{datetime_fmt}}>--<{end:{datetime_fmt}}>',
                   file=outfile)
         if i.body is not None:
             body = convert_newlines(i.body)
