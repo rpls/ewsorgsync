@@ -10,10 +10,10 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 6:
     sys.exit(-1)
 
 setup(name='ewsorgsync',
-      version="0.1",
+      version="0.2",
       description='EWS Calendar to org-mode syncronization tool',
       packages=find_packages(),
-      install_requires=['exchangelib >= 3.2', 'keyring >= 13.2'],
+      install_requires=['exchangelib >= 4.5', 'keyring >= 13.2'],
       python_requires='>=3.6',
       author='Richard Petri',
       author_email='git@rpls.de',

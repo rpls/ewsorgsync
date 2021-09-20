@@ -6,9 +6,12 @@ import os.path
 import sys
 
 import exchangelib as exlib
+import exchangelib.items as exlibit
 import keyring
 
 from ewsorgsync.ewstoorg import ewscal_to_org
+
+import IPython
 
 
 def connect_ews(config):
@@ -58,12 +61,23 @@ def connect_ews(config):
 
 
 def fetch_items(acc, timeframe):
-    start = acc.default_timezone.localize(exlib.EWSDateTime.now())
+    start = exlib.EWSDateTime.now().replace(tzinfo=acc.default_timezone)
     end = start + datetime.timedelta(days=timeframe)
     start -= datetime.timedelta(days=1)
     logging.info(
         f'Fetching calender items from {start:%Y-%m-%d} to {end:%Y-%m-%d}')
     return acc.calendar.view(start=start, end=end)
+
+
+def fetch_requests(acc):
+    # IPython.embed()
+    for req in acc.inbox.filter(item_class__contains='Meeting').order_by('-datetime_received'):
+        if isinstance(req, exlibit.MeetingRequest):
+            print(f'Meeting Request: {req.subject}')
+            IPython.embed()
+        elif isinstance(req, exlibit.MeetingCancellation):
+            print(f'Meeting Cancellation: {req.subject}')
+            IPython.embed()
 
 
 def parse_arguments():
@@ -78,7 +92,9 @@ def parse_arguments():
                         default=False,
                         action='store_true',
                         help='Verbose logging')
-
+    parser.add_argument('-i', '--interactive', default=False,
+                        action='store_true',
+                        help='Interactively go through meeting requests')
     return parser.parse_args()
 
 
@@ -102,12 +118,20 @@ def main():
         if outfile is None:
             logging.error(f'Config option "{outfile}" unset!')
             sys.exit(-1)
-        logging.info(f'Syncing account {service} to file "{outfile}"')
-        items = fetch_items(acc, cfg.getint('timeframe', 14))
-        with open(outfile, 'w') as outfile:
-            ewscal_to_org(items, acc.default_timezone, outfile,
-                          cfg.get('date_fmt', '%Y-%m-%d %H:%M', raw=True),
-                          cfg.get('datetime_fmt', '%Y-%m-%d', raw=True))
+        if args.interactive:
+            # calitems = fetch_items(acc, cfg.getint('timeframe', 14))
+            logging.info(f'Fetching requests from account {service}')
+            reqitem = fetch_requests(acc)
+            # for item in reqitem:
+            #     print(f'Meeting Request: {item.subject}')
+            pass
+        else:
+            logging.info(f'Syncing account {service} to file "{outfile}"')
+            items = fetch_items(acc, cfg.getint('timeframe', 14))
+            with open(outfile, 'w') as outfile:
+                ewscal_to_org(items, acc.default_timezone, outfile,
+                            cfg.get('date_fmt', '%Y-%m-%d %H:%M', raw=True),
+                            cfg.get('datetime_fmt', '%Y-%m-%d', raw=True))
 
 
 if __name__ == '__main__':
