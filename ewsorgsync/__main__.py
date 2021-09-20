@@ -13,8 +13,12 @@ from ewsorgsync.ewstoorg import ewscal_to_org
 
 def connect_ews(config):
     domain = config.get('domain', None)
-    username = config['username']
-    email = config['email']
+    username = config.get('username', None)
+    email = config.get('email', None)
+    if username is not None and domain is not None:
+        username = f'{domain}\\{username}'
+    else:
+        username = f'{email}'
     password = config.get('password', None)
     if password is None:
         password = keyring.get_password('ewsorgsync', username)
