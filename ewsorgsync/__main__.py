@@ -27,8 +27,22 @@ def connect_ews(config):
     else:
         username = f'{email}'
     cred = exlib.Credentials(username, password)
+    endpoint = config.get('endpoint', None)
+    server = config.get('server', None)
+    if endpoint is not None and server is not None:
+        logging.error(
+            'The server and endpoint options are mutually exclusive!')
+        sys.exit(-1)
+    elif endpoint is None and server is None:
+        logging.error(
+            'You must give either the server or endpoint option!')
+        sys.exit(-1)
+    conf = {
+        'server': server,
+        'service_endpoint': endpoint
+    }
     ewsconf = exlib.Configuration(credentials=cred,
-                                  server=config['server'])
+                                  **conf)
     logging.debug('Connecting to endpoint')
     acc = exlib.Account(primary_smtp_address=config['email'],
                         config=ewsconf,

@@ -5,6 +5,9 @@ username=myusername
 # password=
 # ...or better via keyring module
 # python -m keyring set ewsorgsync USERNAME
+# Use Endpoint for your In-House Exchange installation
+# endpoint=https://mail.sit.fraunhofer.de/EWS/Exchange.asmx
+# Use Server for an Outlook Cloud/Office365 instance
 server=outlook.office365.com
 output=~/org/cal.org
 timeframe=14
