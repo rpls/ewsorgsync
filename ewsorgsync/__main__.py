@@ -91,7 +91,7 @@ def main():
     configfile = args.config
     config = configparser.ConfigParser()
     if configfile is None:
-        configfile = os.path.expanduser('~/.ewssyncrc')
+        configfile = os.path.expanduser('~/.ewsorgsyncrc')
         config.read(configfile)
     else:
         config.read_file(configfile)
