@@ -11,8 +11,6 @@ import keyring
 
 from ewsorgsync.ewstoorg import ewscal_to_org
 
-import IPython
-
 
 def connect_ews(config):
     domain = config.get('domain', None)
