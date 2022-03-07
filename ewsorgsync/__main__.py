@@ -131,7 +131,8 @@ def main():
             with open(outfile, 'w') as outfile:
                 ewscal_to_org(items, acc.default_timezone, outfile,
                               cfg.get('date_fmt', '%Y-%m-%d', raw=True),
-                              cfg.get('datetime_fmt', '%Y-%m-%d %H:%M', raw=True))
+                              cfg.get('datetime_fmt', '%Y-%m-%d %H:%M', raw=True),
+                              cfg.get('ignorepattern', fallback=None, raw=True))
 
 
 if __name__ == '__main__':

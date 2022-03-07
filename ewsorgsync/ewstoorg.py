@@ -1,6 +1,7 @@
 import logging
 
 import exchangelib as exlib
+import re
 
 from .htmltoorg import strip_tags, urlregex
 
@@ -18,8 +19,19 @@ def scan_links(body):
     return urlregex.sub(r'[[\1]]', body)
 
 
-def ewscal_to_org(items, timezone, outfile, date_fmt, datetime_fmt):
+def ewscal_to_org(items,
+                  timezone,
+                  outfile,
+                  date_fmt,
+                  datetime_fmt,
+                  ignorepattern=None):
+    if ignorepattern is not None:
+        ignorepattern = re.compile(ignorepattern, re.IGNORECASE)
     for i in items:
+        if ignorepattern is not None and ignorepattern.match(i.subject):
+            logging.info(
+                f'Ignoring appointment "{i.subject}" on {i.start:{date_fmt}}')
+            continue
         logging.info(
             f'Adding appointment "{i.subject}" on {i.start:{date_fmt}}')
         print(f'* {i.subject}', file=outfile)

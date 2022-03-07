@@ -14,3 +14,5 @@ timeframe=14
 # Date Formats can be optionally adapted
 # date_fmt=%Y-%m-%d
 # datetime_fmt=%Y-%m-%d %H:%M
+# Ignore Appointments with certain subjects (regex)
+# ignorepattern=\[*Blocker\]*
