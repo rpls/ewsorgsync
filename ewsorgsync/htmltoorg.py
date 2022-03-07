@@ -59,6 +59,8 @@ class HTMLToOrg(HTMLParser):
             self.push()
         elif tag == 'b':
             self.push()
+        elif tag == 'i':
+            self.push()
         elif tag in self.IGNORED_TAGS:
             pass
         else:
@@ -75,6 +77,8 @@ class HTMLToOrg(HTMLParser):
                 self.write(f'/{output}/')
         elif tag == 'b':
             self.write(f'*{self.pop()}*')
+        elif tag == 'i':
+            self.write(f'/{self.pop()}/')
         elif tag in ['p', 'o:p']:
             output = self.pop().strip()
             if len(output) > 0:
